@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId/>
+  <artifactId/>
+  <version>1.0</version>
+  <packaging>kjar</packaging>
+  <name/>
+  <dependencies>
+    <dependency>
+      <groupId>com.signavio</groupId>
+      <artifactId>dmn-formulae-v3</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  <repositories>
+    <repository>
+      <id>signavio-m2-repo</id>
+      <name>Signavio M2 Repository</name>
+      <url>https://signavio.artifactoryonline.com/signavio/public/</url>
+    </repository>
+	<repository>
+      <id>guvnor-m2-repo</id>
+      <name>Guvnor M2 Repo</name>
+      <url>http://localhost:8080/business-central/maven2/</url>
+    </repository>
+  </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.kie</groupId>
+        <artifactId>kie-maven-plugin</artifactId>
+        <version>6.4.0.Final-redhat-3</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
