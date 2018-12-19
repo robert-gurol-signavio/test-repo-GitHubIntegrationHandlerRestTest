@@ -1,0 +1,179 @@
+package null 
+
+import java.time.OffsetTime
+import java.util.Arrays
+import org.slf4j.Logger
+import java.text.DecimalFormat
+import org.slf4j.LoggerFactory
+import com.signavio.dmn.formulae.v3.IndexedListElement
+import java.util.ArrayList
+import java.util.HashSet
+import java.math.BigDecimal
+import java.util.List
+import java.time.OffsetDateTime
+import com.signavio.dmn.formulae.v3.DmnHierarchyFormulae
+import java.time.LocalDate
+import com.signavio.dmn.formulae.v3.DmnFormulae
+import java.util.Collections
+import java.math.RoundingMode
+
+global String modelId
+global Integer revisionNumber
+global List $allMessages
+global Logger $logger
+
+declare  DmnFormulae 
+end
+
+declare  DmnFormulaeLocal_mydecision  extends  DmnFormulae  
+end
+
+declare  DmnHierarchyFormulae 
+end
+
+declare  IndexedListElement 
+end
+
+declare  AnnotationItem_mydecision 
+    decision : String  
+    annotationName : String  
+    ruleName : String  
+    category : AnnotationCategory_mydecision  
+    message : String  
+    timestamp : OffsetDateTime  
+end
+
+declare  Input_mydecision 
+    sss : String  
+end
+
+declare  MyDecision  extends  IndexedListElement  
+    myDecision : String  
+end
+
+declare  MyDecision_Output 
+    myDecision : String  
+end
+
+declare enum AnnotationCategory_mydecision
+	INFO,CRITICAL,REGULATION,POLICY;
+end
+
+rule "initialize_version_info_mydecision"
+    no-loop true
+    salience 1000
+    ruleflow-group 'mydecision'
+when
+then
+	drools.getWorkingMemory().setGlobal("modelId", "95c237c4e31e4b70814fe89da549e7bd");
+	drools.getWorkingMemory().setGlobal("revisionNumber", 1);
+end
+
+rule "initialize_annotations_list_mydecision"
+    no-loop true
+    salience 1000
+    ruleflow-group 'mydecision'
+when
+then
+	drools.getWorkingMemory().setGlobal("$allMessages", new ArrayList());
+end
+
+rule "add_formulae_to_memory_mydecision"
+    no-loop true
+    salience 1000
+    ruleflow-group 'mydecision'
+when
+then
+	insert(new DmnFormulaeLocal_mydecision());
+	insert(new DmnHierarchyFormulae());
+end
+
+rule "init_logger_mydecision"
+    no-loop true
+    salience 1000
+    ruleflow-group 'mydecision'
+when
+then
+	drools.getWorkingMemory().setGlobal("$logger", LoggerFactory.getLogger("DroolsExecution"));
+end
+
+rule "log_input_rule_mydecision"
+    no-loop true
+    salience 999
+    ruleflow-group 'mydecision'
+when
+    $input : Input_mydecision(  )  
+then
+	$logger.info($input.toString());
+end
+
+rule "myDecision_rule_1"
+    no-loop true
+    //decision:  myDecision
+    salience 1
+    ruleflow-group 'mydecision'
+when
+    $F : DmnFormulaeLocal_mydecision(  )  
+    $H : DmnHierarchyFormulae(  )  
+    not( 
+    MyDecision_Output(  )   ) 
+    not( 
+    MyDecision(  )   ) 
+    $input : Input_mydecision(  )  
+    eval( $F.nullSafeEval($F.equals($input.getSss(), "a")) ) 
+then
+	MyDecision $myDecision = new MyDecision();
+	$myDecision.setMyDecision("b");
+	$myDecision.setIndex(0);
+	insert($myDecision);
+end
+
+rule "myDecision_singleResultOutput"
+    no-loop true
+    //decision:  myDecision
+    salience 0
+    ruleflow-group 'mydecision'
+when
+    $F : DmnFormulaeLocal_mydecision(  )  
+    $H : DmnHierarchyFormulae(  )  
+    not( 
+    MyDecision_Output(  )   ) 
+    $input : Input_mydecision(  )  
+    $myDecision : MyDecision(  )  
+then
+	MyDecision_Output $myDecision_Output = new MyDecision_Output();
+	$myDecision_Output.setMyDecision($myDecision.getMyDecision());
+	retract($myDecision);
+	insert($myDecision_Output);
+end
+
+rule "myDecision_emptyResultFallBack"
+    no-loop true
+    //decision:  myDecision
+    salience -1
+    ruleflow-group 'mydecision'
+when
+    $F : DmnFormulaeLocal_mydecision(  )  
+    $H : DmnHierarchyFormulae(  )  
+    not( 
+    MyDecision_Output(  )   ) 
+    $input : Input_mydecision(  )  
+then
+	MyDecision_Output $myDecision_Output = new MyDecision_Output();
+	$myDecision_Output.setMyDecision(null);
+	insert($myDecision_Output);
+end
+
+rule "myDecision_cleanup_rule_output"
+    no-loop true
+    //decision:  myDecision
+    salience 2
+    ruleflow-group 'mydecision'
+when
+    $F : DmnFormulaeLocal_mydecision(  )  
+    $H : DmnHierarchyFormulae(  )  
+    MyDecision_Output(  )  
+    $myDecision : MyDecision(  )  
+then
+	retract($myDecision);
+end
